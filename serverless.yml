@@ -29,7 +29,7 @@ functions:
     events:
       - http:
           path: mensa
-          method: post
+          method: put
           cors: true
 
   mensa-list:
@@ -55,7 +55,7 @@ functions:
     events:
       - http:
           path: meals
-          method: post
+          method: put
           cors: true
 
   meals-list:
@@ -72,6 +72,14 @@ functions:
       - http:
           path: meals/{id}
           method: get
+          cors: true
+
+  meals-rate:
+    handler: meals/update.rate
+    events:
+      - http:
+          path: meals/{id}
+          method: post
           cors: true
 ###############################################################
 
