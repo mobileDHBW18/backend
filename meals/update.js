@@ -4,17 +4,17 @@ const AWS = require('aws-sdk') // eslint-disable-line import/no-extraneous-depen
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
-module.exports.update = (event, context, callback) => {
+module.exports.rate = (event, context, callback) => {
   const timestamp = new Date().getTime()
   const data = JSON.parse(event.body)
 
   // validation
-  if (typeof data.text !== 'string' || typeof data.checked !== 'boolean') {
+  if (typeof data.rating !== 'number') {
     console.error('Validation Failed')
     callback(null, {
       statusCode: 400,
       headers: { 'Content-Type': 'text/plain' },
-      body: 'Couldn\'t update the todo item.'
+      body: 'Couldn\'t update the meal item.'
     })
     return
   }
@@ -24,15 +24,12 @@ module.exports.update = (event, context, callback) => {
     Key: {
       id: event.pathParameters.id
     },
-    ExpressionAttributeNames: {
-      '#todo_text': 'text'
-    },
     ExpressionAttributeValues: {
-      ':text': data.text,
-      ':checked': data.checked,
+      ':rating': data.rating,
+      ':ratingsNum': 100,
       ':updatedAt': timestamp
     },
-    UpdateExpression: 'SET #todo_text = :text, checked = :checked, updatedAt = :updatedAt',
+    UpdateExpression: 'SET rating = :rating, ratingsNum = :ratingsNum, updatedAt = :updatedAt',
     ReturnValues: 'ALL_NEW'
   }
 
