@@ -1,16 +1,138 @@
-service: hello
+service: cantinr
+
+frameworkVersion: ">=1.1.0 <2.0.0"
 
 provider:
   name: aws
   runtime: nodejs6.10
   region: eu-central-1
-  memorySize: 128
+  environment:
+    DYNAMODB_TABLE_MEALS: ${self:service}-${opt:stage, self:provider.stage}-meals
+    DYNAMODB_TABLE_MENSA: ${self:service}-${opt:stage, self:provider.stage}-mensa
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: 
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MEALS}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MENSA}"
 
 functions:
-  hello:
-    handler: handler.hello
+############################ MENSA ############################
+  mensa-create:
+    handler: mensa/create.create
     events:
       - http:
-          path: /sayhi
-          method: get
+          path: mensa
+          method: post
+          cors: true
 
+  mensa-list:
+    handler: mensa/list.list
+    events:
+      - http:
+          path: mensa
+          method: get
+          cors: true
+
+  mensa-get:
+    handler: mensa/get.get
+    events:
+      - http:
+          path: mensa/{id}
+          method: get
+          cors: true
+###############################################################
+
+############################ MEALS ############################
+  meals-create:
+    handler: meals/create.create
+    events:
+      - http:
+          path: meals
+          method: post
+          cors: true
+
+  meals-list:
+    handler: meals/list.list
+    events:
+      - http:
+          path: meals
+          method: get
+          cors: true
+
+  meals-get:
+    handler: meals/get.get
+    events:
+      - http:
+          path: meals/{id}
+          method: get
+          cors: true
+###############################################################
+
+
+  # create:
+  #   handler: meals/create.create
+  #   events:
+  #     - http:
+  #         path: meals
+  #         method: post
+  #         cors: true
+
+  # update:
+  #   handler: meals/update.update
+  #   events:
+  #     - http:
+  #         path: meals/{id}
+  #         method: put
+  #         cors: true
+
+  # delete:
+  #   handler: meals/delete.delete
+  #   events:
+  #     - http:
+  #         path: meals/{id}
+  #         method: delete
+  #         cors: true
+
+resources:
+  Resources:
+
+    MealsDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE_MEALS}
+
+    MensaDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE_MENSA}
