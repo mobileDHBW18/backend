@@ -5,7 +5,7 @@ const AWS = require('aws-sdk') // eslint-disable-line import/no-extraneous-depen
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
 module.exports.rate = (event, context, callback) => {
-  const timestamp = new Date().getTime()
+  const timestamp = new Date(Date.now()).toJSON().slice(0, 10)
   const data = JSON.parse(event.body)
 
   // validation
