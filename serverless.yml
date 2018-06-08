@@ -89,35 +89,10 @@ functions:
   meals-scrape:
     handler: meals/scraper.scrape
     events:
-      - schedule: cron(0 10 * * ? *)
+      - schedule: cron(0 10 ? * MON-FRI *)
     package:
       individually: true
 ###############################################################
-
-
-  # create:
-  #   handler: meals/create.create
-  #   events:
-  #     - http:
-  #         path: meals
-  #         method: post
-  #         cors: true
-
-  # update:
-  #   handler: meals/update.update
-  #   events:
-  #     - http:
-  #         path: meals/{id}
-  #         method: put
-  #         cors: true
-
-  # delete:
-  #   handler: meals/delete.delete
-  #   events:
-  #     - http:
-  #         path: meals/{id}
-  #         method: delete
-  #         cors: true
 
 resources:
   Resources:
