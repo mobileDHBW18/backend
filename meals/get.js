@@ -1,7 +1,6 @@
 'use strict'
 
-const AWS = require('aws-sdk') // eslint-disable-line import/no-extraneous-dependencies
-
+const AWS = require('aws-sdk')
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
 const round = num => Math.round(num * 10) / 10

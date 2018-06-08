@@ -1,10 +1,10 @@
 'use strict'
 
-const dishUtil = require('../lib/dishUtil')
+const AWS = require('aws-sdk')
 const uuid = require('uuid')
 const time = require('../lib/timeUtil')
+const dishUtil = require('../lib/dishUtil')
 
-const AWS = require('aws-sdk') // eslint-disable-line import/no-extraneous-dependencies
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
 const parsePrice = str => parseFloat(str.replace(',', '.'))
