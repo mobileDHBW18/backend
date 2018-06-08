@@ -26,15 +26,13 @@ module.exports.create = (event, context, callback) => {
       name: data.name,
       mensa: data.mensa,
       categories: {
-        veg: data.categories.veg,
+        fish: data.categories.fish,
         chicken: data.categories.chicken,
-        beef: data.categories.beef,
-        gluten: data.categories.gluten,
+        veg: data.categories.veg,
         pig: data.categories.pig,
-        fish: data.categories.fish
+        beef: data.categories.beef
       },
       ingrediences: data.ingrediences,
-      allergens: data.allergens,
       rating: 0.0,
       ratingsNum: 0,
       price: data.price,

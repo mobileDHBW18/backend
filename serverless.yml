@@ -22,6 +22,10 @@ provider:
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MEALS}"
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MENSA}"
 
+package:
+  exclude:
+    - node_modules/**
+    
 functions:
 ############################ MENSA ############################
   mensa-create:
@@ -81,6 +85,13 @@ functions:
           path: meals/{id}
           method: post
           cors: true
+
+  meals-scrape:
+    handler: meals/scraper.scrape
+    events:
+      - schedule: cron(0 10 * * ? *)
+    package:
+      individually: true
 ###############################################################
 
 
