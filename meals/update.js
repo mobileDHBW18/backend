@@ -1,13 +1,14 @@
 'use strict'
 
-const newRating = (oldRating, oldRatingNum, rating) => (oldRating * oldRatingNum + rating) / (oldRatingNum + 1)
-
 const AWS = require('aws-sdk') // eslint-disable-line import/no-extraneous-dependencies
+const time = require('../lib/timeUtil')
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
+const newRating = (oldRating, oldRatingNum, rating) => (oldRating * oldRatingNum + rating) / (oldRatingNum + 1)
+
 module.exports.rate = (event, context, callback) => {
-  const timestamp = new Date(Date.now()).toJSON().slice(0, 10)
+  const timestamp = time.now()
   const data = JSON.parse(event.body)
 
   // validation

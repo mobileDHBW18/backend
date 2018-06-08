@@ -1,12 +1,13 @@
 'use strict'
 
 const uuid = require('uuid')
+const time = require('../lib/timeUtil')
 const AWS = require('aws-sdk') // eslint-disable-line import/no-extraneous-dependencies
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
 module.exports.create = (event, context, callback) => {
-  const timestamp = new Date(Date.now()).toJSON().slice(0, 10)
+  const timestamp = time.now()
   const data = JSON.parse(event.body)
   if (typeof data.name !== 'string') {
     console.error('Validation Failed')
