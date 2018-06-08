@@ -1,5 +1,7 @@
 'use strict'
 
+const newRating = (oldRating, oldRatingNum, rating) => (oldRating * oldRatingNum + rating) / (oldRatingNum + 1)
+
 const AWS = require('aws-sdk') // eslint-disable-line import/no-extraneous-dependencies
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
@@ -23,34 +25,53 @@ module.exports.rate = (event, context, callback) => {
     TableName: process.env.DYNAMODB_TABLE_MEALS,
     Key: {
       id: event.pathParameters.id
-    },
-    ExpressionAttributeValues: {
-      ':rating': data.rating,
-      ':ratingsNum': 100,
-      ':updatedAt': timestamp
-    },
-    UpdateExpression: 'SET rating = :rating, ratingsNum = :ratingsNum, updatedAt = :updatedAt',
-    ReturnValues: 'ALL_NEW'
+    }
   }
 
-  // update the todo in the database
-  dynamoDb.update(params, (error, result) => {
+  // fetch meal from the database
+  dynamoDb.get(params, (error, result) => {
     // handle potential errors
     if (error) {
       console.error(error)
       callback(null, {
         statusCode: error.statusCode || 501,
         headers: { 'Content-Type': 'text/plain' },
-        body: 'Couldn\'t fetch the todo item.'
+        body: 'Couldn\'t fetch the meal item.'
       })
       return
     }
 
-    // create a response
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify(result.Attributes)
+    const oldRating = result.Item.rating
+    const oldRatingNum = result.Item.ratingsNum
+
+    // Add Update Properties to Params
+    params.ExpressionAttributeValues = {
+      ':rating': newRating(oldRating, oldRatingNum, data.rating),
+      ':ratingsNum': oldRatingNum + 1,
+      ':updatedAt': timestamp
     }
-    callback(null, response)
+    params.UpdateExpression = 'SET rating = :rating, ratingsNum = :ratingsNum, updatedAt = :updatedAt'
+    params.ReturnValues = 'ALL_NEW'
+
+    // update the todo in the database
+    dynamoDb.update(params, (error, result) => {
+      // handle potential errors
+      if (error) {
+        console.error(error)
+        callback(null, {
+          statusCode: error.statusCode || 501,
+          headers: { 'Content-Type': 'text/plain' },
+          body: 'Couldn\'t fetch the todo item.'
+        })
+        return
+      }
+
+      // create a response
+      const response = {
+        statusCode: 200,
+        body: JSON.stringify(result.Attributes)
+      }
+      callback(null, response)
+    })
   })
 }

@@ -4,6 +4,8 @@ const AWS = require('aws-sdk') // eslint-disable-line import/no-extraneous-depen
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
+const round = num => Math.round(num * 10) / 10
+
 module.exports.get = (event, context, callback) => {
   const params = {
     TableName: process.env.DYNAMODB_TABLE_MEALS,
@@ -24,6 +26,8 @@ module.exports.get = (event, context, callback) => {
       })
       return
     }
+
+    result.Item.rating = round(result.Item.rating)
 
     // create a response
     const response = {
