@@ -8,6 +8,20 @@ const params = {
 }
 
 module.exports.list = (event, context, callback) => {
+  const qs = event.queryStringParameters
+
+  if (qs && qs.mensa && qs.date) {
+    params.FilterExpression = '#mensa = :mensa_val AND #date = :date_val'
+    params.ExpressionAttributeNames = {
+      '#mensa': 'mensa',
+      '#date': 'date'
+    }
+    params.ExpressionAttributeValues = {
+      ':mensa_val': qs.mensa,
+      ':date_val': qs.date
+    }
+  }
+
   // fetch all meals from the database
   dynamoDb.scan(params, (error, result) => {
     // handle potential errors

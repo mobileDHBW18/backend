@@ -38,6 +38,7 @@ module.exports.create = (event, context, callback) => {
       ratingsNum: 0,
       price: data.price,
       pic: null,
+      date: timestamp,
       createdAt: timestamp,
       updatedAt: timestamp
     }
