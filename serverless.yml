@@ -202,6 +202,7 @@ custom:
     certificateName: "tobiasrahloff.com"
     createRoute53Record: true
     endpointType: 'edge'
+    # https://cantinr.tobiasrahloff.com/api/mensa
 
 
 
