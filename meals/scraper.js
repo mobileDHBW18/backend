@@ -37,7 +37,7 @@ module.exports.scrape = (event, context, callback) => {
           updatedAt: timestamp
         }
       }
-      // write the mensa to the database
+      // write the meal to the database
       dynamoDb.put(params, (error) => {
         // handle potential errors
         if (error) {

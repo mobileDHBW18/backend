@@ -4,11 +4,14 @@ frameworkVersion: ">=1.1.0 <2.0.0"
 
 provider:
   name: aws
+  stage: dev
   runtime: nodejs6.10
   region: eu-central-1
   environment:
     DYNAMODB_TABLE_MEALS: ${self:service}-${opt:stage, self:provider.stage}-meals
     DYNAMODB_TABLE_MENSA: ${self:service}-${opt:stage, self:provider.stage}-mensa
+    S3_BUCKET_PHOTOS: ${self:service}-${opt:stage, self:provider.stage}-photos
+
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -17,10 +20,15 @@ provider:
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
+        # - dynamodb:DeleteItem # not needed right now
       Resource: 
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MEALS}"
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MENSA}"
+
+    - Effect: Allow # THIS IS NOT A GOOD IDEA
+      Action:
+        - s3:* # NOT AT ALL
+      Resource: "*" # DON'T DO THIS
 
 package:
   exclude:
@@ -92,6 +100,11 @@ functions:
       - schedule: cron(0 10 ? * MON-FRI *)
     package:
       individually: true
+
+  photoprocess:
+    handler: meals/photo.postprocess
+    events:
+      - s3: photos
 ###############################################################
 
 resources:
@@ -130,3 +143,25 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_TABLE_MENSA}
+
+    S3BucketPhotos:
+      Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
+      Properties:
+        BucketName: ${self:provider.environment.S3_BUCKET_PHOTOS}
+        AccessControl: PublicReadWrite # NOT A GOOD IDEA
+    PhotoprocessLambdaPermissionPhotosS3:
+      Type: "AWS::Lambda::Permission"
+      Properties:
+        FunctionName:
+          "Fn::GetAtt":
+            - PhotoprocessLambdaFunction
+            - Arn
+        Principal: "s3.amazonaws.com"
+        Action: "lambda:InvokeFunction"
+        SourceAccount:
+          Ref: AWS::AccountId
+        SourceArn: "arn:aws:s3:::${self:provider.environment.S3_BUCKET_PHOTOS}"
+
+
+
