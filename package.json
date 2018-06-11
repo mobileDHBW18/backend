@@ -25,8 +25,8 @@
   },
   "scripts": {
     "sam": "serverless sam export --output ./sam-template.yml",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "offline": "serverless offline start",
+    "test": "test --coverage",
     "prune": "prune -n 5"
   },
   "repository": {
