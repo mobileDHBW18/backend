@@ -7,6 +7,7 @@ plugins:
   - serverless-plugin-optimize # https://github.com/FidelLimited/serverless-plugin-optimize
   - serverless-plugin-warmup # https://github.com/FidelLimited/serverless-plugin-warmup
   - serverless-prune-plugin # https://github.com/claygregory/serverless-prune-plugin
+  - serverless-sentry # https://github.com/arabold/serverless-sentry-plugin
   - serverless-offline # https://github.com/dherault/serverless-offline
   - serverless-sam # https://github.com/SAPessi/serverless-sam
 
@@ -21,7 +22,8 @@ provider:
     S3_BUCKET_PHOTOS: ${self:service}-${opt:stage, self:provider.stage}-photos
 
   iamRoleStatements:
-    - Effect: Allow
+    # allow function to access the dynamodb tables for mensa and meals
+    - Effect: Allow 
       Action:
         - dynamodb:Query
         - dynamodb:Scan
@@ -33,6 +35,20 @@ provider:
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MEALS}"
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_MENSA}"
 
+    # allow the serverless-warmup plugin to ping lambdas
+    - Effect: 'Allow'
+      Action:
+        - 'lambda:InvokeFunction'
+      Resource:
+      - Fn::Join:
+        - ':'
+        - 
+          - 'arn:aws:lambda'
+          - Ref: AWS::Region
+          - Ref: AWS::AccountId
+          - function:${self:service}-${opt:stage, self:provider.stage}-*
+
+    # allow s3 bucket shennanigans for photo stuff
     - Effect: Allow # THIS IS NOT A GOOD IDEA
       Action:
         - s3:* # NOT AT ALL
@@ -41,10 +57,15 @@ provider:
 package:
   individually: true
   exclude:
+    - test/**
+    - _warmup/**
+    - coverage/**
+    - .circleci/**
+    - _optimize/**
     - node_modules/**
     
 functions:
-############################ FUNCTIONS: MENSA ############################
+############################# FUNCTIONS:  MENSA #############################
   mensa-create:
     handler: mensa/create.create
     events:
@@ -55,6 +76,7 @@ functions:
 
   mensa-list:
     handler: mensa/list.list
+    warmup: true
     events:
       - http:
           path: mensa
@@ -63,13 +85,14 @@ functions:
 
   mensa-get:
     handler: mensa/get.get
+    warmup: true
     events:
       - http:
           path: mensa/{id}
           method: get
           cors: true
 
-############################ FUNCTION: MEALS ############################
+############################# FUNCTIONS:  MEALS #############################
   meals-create:
     handler: meals/create.create
     events:
@@ -80,6 +103,7 @@ functions:
 
   meals-list:
     handler: meals/list.list
+    warmup: true
     events:
       - http:
           path: meals
@@ -88,6 +112,7 @@ functions:
 
   meals-get:
     handler: meals/get.get
+    warmup: true
     events:
       - http:
           path: meals/{id}
@@ -96,6 +121,7 @@ functions:
 
   meals-rate:
     handler: meals/update.rate
+    warmup: true
     events:
       - http:
           path: meals/{id}
@@ -114,8 +140,8 @@ functions:
     events:
       - s3: photos
 
-############################ CloudFormation Ressources ############################
 resources:
+######################### CloudFormation Ressources #########################
   Resources:
 
     MealsDynamoDbTable:
@@ -191,10 +217,9 @@ resources:
           Ref: AWS::AccountId
         SourceArn: "arn:aws:s3:::${self:provider.environment.S3_BUCKET_PHOTOS}"
 
-############################ DOMAIN  MANAGEMENT ############################
-#      https://github.com/amplify-education/serverless-domain-manager      #
-############################################################################
+
 custom:
+############################# DOMAIN MANAGEMENT #############################
   customDomain:
     domainName: cantinr.tobiasrahloff.com
     stage: dev
@@ -204,5 +229,16 @@ custom:
     endpointType: 'edge'
     # https://cantinr.tobiasrahloff.com/api/mensa
 
+############################# SENTRY MANAGEMENT #############################
+  sentry:
+     dsn: "https://1db728bd86d74ccea1685e7f6b65b5f7:3043d45db8404cb591573527ce3cc572@sentry.io/1223787"
 
-
+############################# WARMUP MANAGEMENT #############################
+  warmup:
+    folderName: '_warmup' # Name of the folder created for the generated warmup 
+    cleanFolder: false
+    memorySize: 256
+    name: ${self:service}-${opt:stage, self:provider.stage}-warmup
+    schedule: 'cron(0/5 8-17 ? * MON-FRI *)' # Run WarmUP every 5 minutes Mon-Fri between 8:00am and 5:55pm (UTC)
+    timeout: 20
+  

@@ -7,3 +7,9 @@ jspm_packages
 
 # Generated SAM Template
 sam-template.yml
+
+# serverless-optimize tmp storage
+_optimize/
+
+# serverless-optimize tmp storage
+_warmup/

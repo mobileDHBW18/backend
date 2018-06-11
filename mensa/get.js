@@ -1,10 +1,18 @@
 'use strict'
 
 const AWS = require('aws-sdk')
+const Raven = require('raven') // Official `raven` module
+const RavenWrapper = require('serverless-sentry-lib')
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
-module.exports.get = (event, context, callback) => {
+module.exports.get = RavenWrapper.handler(Raven, (event, context, callback) => {
+  /** exit function immediately if invoked by serverless-warmup */
+  if (event.source === 'serverless-plugin-warmup') {
+    console.log('WarmUP - Lambda is warm!')
+    return callback(null, 'Lambda is warm!')
+  }
+
   const params = {
     TableName: process.env.DYNAMODB_TABLE_MENSA,
     Key: {
@@ -32,4 +40,4 @@ module.exports.get = (event, context, callback) => {
     }
     callback(null, response)
   })
-}
+})
