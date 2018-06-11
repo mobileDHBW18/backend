@@ -2,6 +2,14 @@ service: cantinr
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
+plugins:
+  - serverless-domain-manager # https://github.com/amplify-education/serverless-domain-manager
+  - serverless-plugin-optimize # https://github.com/FidelLimited/serverless-plugin-optimize
+  - serverless-plugin-warmup # https://github.com/FidelLimited/serverless-plugin-warmup
+  - serverless-prune-plugin # https://github.com/claygregory/serverless-prune-plugin
+  - serverless-offline # https://github.com/dherault/serverless-offline
+  - serverless-sam # https://github.com/SAPessi/serverless-sam
+
 provider:
   name: aws
   stage: dev
@@ -31,11 +39,12 @@ provider:
       Resource: "*" # DON'T DO THIS
 
 package:
+  individually: true
   exclude:
     - node_modules/**
     
 functions:
-############################ MENSA ############################
+############################ FUNCTIONS: MENSA ############################
   mensa-create:
     handler: mensa/create.create
     events:
@@ -59,9 +68,8 @@ functions:
           path: mensa/{id}
           method: get
           cors: true
-###############################################################
 
-############################ MEALS ############################
+############################ FUNCTION: MEALS ############################
   meals-create:
     handler: meals/create.create
     events:
@@ -105,8 +113,8 @@ functions:
     handler: meals/photo.postprocess
     events:
       - s3: photos
-###############################################################
 
+############################ CloudFormation Ressources ############################
 resources:
   Resources:
 
@@ -150,6 +158,26 @@ resources:
       Properties:
         BucketName: ${self:provider.environment.S3_BUCKET_PHOTOS}
         AccessControl: PublicReadWrite # NOT A GOOD IDEA
+    # S3BucketPhotosPolicy: 
+    #   Type: "AWS::S3::BucketPolicy"
+    #   Properties: 
+    #     Bucket: 
+    #       Ref: ${self:provider.environment.S3_BUCKET_PHOTOS}
+    #     PolicyDocument: 
+    #       Statement: 
+    #         - 
+    #           Action: 
+    #             - "s3:GetObject"
+    #           Effect: "Allow"
+    #           Resource: 
+    #             Fn::Join: 
+    #               - ""
+    #               - 
+    #                 - "arn:aws:s3:::"
+    #                 - 
+    #                   Ref: ${self:provider.environment.S3_BUCKET_PHOTOS}
+    #                 - "/*"
+    #           Principal: "*"
     PhotoprocessLambdaPermissionPhotosS3:
       Type: "AWS::Lambda::Permission"
       Properties:
@@ -162,6 +190,18 @@ resources:
         SourceAccount:
           Ref: AWS::AccountId
         SourceArn: "arn:aws:s3:::${self:provider.environment.S3_BUCKET_PHOTOS}"
+
+############################ DOMAIN  MANAGEMENT ############################
+#      https://github.com/amplify-education/serverless-domain-manager      #
+############################################################################
+custom:
+  customDomain:
+    domainName: cantinr.tobiasrahloff.com
+    stage: dev
+    basePath: api
+    certificateName: "tobiasrahloff.com"
+    createRoute53Record: true
+    endpointType: 'edge'
 
 
 
