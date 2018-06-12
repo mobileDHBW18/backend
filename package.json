@@ -26,7 +26,7 @@
   "scripts": {
     "sam": "serverless sam export --output ./sam-template.yml",
     "offline": "serverless offline start",
-    "test": "test --coverage",
+    "test": "jest",
     "prune": "prune -n 5"
   },
   "repository": {
