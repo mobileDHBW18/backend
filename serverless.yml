@@ -61,6 +61,7 @@ package:
     - coverage/**
     - .circleci/**
     - _optimize/**
+    - '*.log'
     # - node_modules/**
     
 functions:

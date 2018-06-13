@@ -13,3 +13,7 @@ _optimize/
 
 # serverless-optimize tmp storage
 _warmup/
+
+coverage/**
+
+*.log
