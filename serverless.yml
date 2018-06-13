@@ -218,13 +218,23 @@ resources:
 custom:
 ############################# DOMAIN MANAGEMENT #############################
   customDomain:
-    domainName: cantinr.tobiasrahloff.com
+    domainName: api.cantinr.de
     stage: dev
     basePath: api
-    certificateName: "tobiasrahloff.com"
+    certificateName: "cantinr.de"
     createRoute53Record: true
     endpointType: 'edge'
-    # https://cantinr.tobiasrahloff.com/api/mensa
+    # https://api.cantinr.de/v1/mensa
+
+  # customDomain:
+  #   domainName: cantinr.tobiasrahloff.com
+  #   stage: dev
+  #   basePath: api
+  #   certificateName: "tobiasrahloff.com"
+  #   createRoute53Record: true
+  #   endpointType: 'edge'
+  #   # https://cantinr.tobiasrahloff.com/api/mensa
+
 
 ############################# SENTRY MANAGEMENT #############################
   sentry:
