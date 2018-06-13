@@ -4,10 +4,9 @@ frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
   - serverless-domain-manager # https://github.com/amplify-education/serverless-domain-manager
-  - serverless-plugin-optimize # https://github.com/FidelLimited/serverless-plugin-optimize
-  - serverless-plugin-warmup # https://github.com/FidelLimited/serverless-plugin-warmup
+  # - serverless-plugin-optimize # https://github.com/FidelLimited/serverless-plugin-optimize
+  # - serverless-plugin-warmup # https://github.com/FidelLimited/serverless-plugin-warmup
   - serverless-prune-plugin # https://github.com/claygregory/serverless-prune-plugin
-  - serverless-sentry # https://github.com/arabold/serverless-sentry-plugin
   - serverless-offline # https://github.com/dherault/serverless-offline
   - serverless-sam # https://github.com/SAPessi/serverless-sam
 
@@ -20,6 +19,7 @@ provider:
     DYNAMODB_TABLE_MEALS: ${self:service}-${opt:stage, self:provider.stage}-meals
     DYNAMODB_TABLE_MENSA: ${self:service}-${opt:stage, self:provider.stage}-mensa
     S3_BUCKET_PHOTOS: ${self:service}-${opt:stage, self:provider.stage}-photos
+    REGION: ${self:provider.region}
 
   iamRoleStatements:
     # allow function to access the dynamodb tables for mensa and meals
@@ -55,14 +55,13 @@ provider:
       Resource: "*" # DON'T DO THIS
 
 package:
-  individually: true
+  # individually: true
   exclude:
     - test/**
-    - _warmup/**
     - coverage/**
     - .circleci/**
     - _optimize/**
-    - node_modules/**
+    # - node_modules/**
     
 functions:
 ############################# FUNCTIONS:  MENSA #############################
@@ -132,11 +131,9 @@ functions:
     handler: meals/scraper.scrape
     events:
       - schedule: cron(0 10 ? * MON-FRI *)
-    package:
-      individually: true
 
   photoprocess:
-    handler: meals/photo.postprocess
+    handler: meals/photo.process
     events:
       - s3: photos
 
