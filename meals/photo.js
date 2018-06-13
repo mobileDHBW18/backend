@@ -1,8 +1,6 @@
 'use strict'
 
 const Clarifai = require('clarifai')
-const bucket = process.env.S3_BUCKET_PHOTOS
-const region = process.env.REGION
 const nsfwClarifaiModelID = 'e9576d86d2004ed1a38ba0cf39ecb4b1'
 
 const app = new Clarifai.App({
@@ -11,8 +9,14 @@ const app = new Clarifai.App({
 
 module.exports.process = event => {
   event.Records.forEach(record => {
-    const fileKey = record.s3.object.key
-    const fileURL = `https://s3.${region}.amazonaws.com/${bucket}/${fileKey}`
+    const fileURL = [
+      'https://s3.',
+      process.env.REGION,
+      '.amazonaws.com/',
+      process.env.S3_BUCKET_PHOTOS,
+      '/',
+      record.s3.object.key
+    ].join('')
 
     app.models.predict(nsfwClarifaiModelID, fileURL)
       .then(
