@@ -31,7 +31,7 @@ jobs:
       # deploy app            
       # - run:
       #     name: Deploy application 
-      #     command: sls deploy -v --stage prod
+      #     command: sls deploy --verbose --stage prod
 
       - save_cache:
           paths:

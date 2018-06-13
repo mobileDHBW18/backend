@@ -221,7 +221,7 @@ custom:
   customDomain:
     domainName: api.cantinr.de
     stage: dev
-    basePath: api
+    basePath: v1
     certificateName: "cantinr.de"
     createRoute53Record: true
     endpointType: 'edge'
