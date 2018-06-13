@@ -4,8 +4,8 @@ frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
   - serverless-domain-manager # https://github.com/amplify-education/serverless-domain-manager
-  # - serverless-plugin-optimize # https://github.com/FidelLimited/serverless-plugin-optimize
-  # - serverless-plugin-warmup # https://github.com/FidelLimited/serverless-plugin-warmup
+  - serverless-plugin-optimize # https://github.com/FidelLimited/serverless-plugin-optimize
+  - serverless-plugin-warmup # https://github.com/FidelLimited/serverless-plugin-warmup
   - serverless-prune-plugin # https://github.com/claygregory/serverless-prune-plugin
   - serverless-offline # https://github.com/dherault/serverless-offline
   - serverless-sam # https://github.com/SAPessi/serverless-sam
@@ -55,7 +55,7 @@ provider:
       Resource: "*" # DON'T DO THIS
 
 package:
-  # individually: true
+  individually: true
   exclude:
     - test/**
     - coverage/**
@@ -75,7 +75,7 @@ functions:
 
   mensa-list:
     handler: mensa/list.list
-    warmup: true
+    warmup: prod
     events:
       - http:
           path: mensa
@@ -84,7 +84,7 @@ functions:
 
   mensa-get:
     handler: mensa/get.get
-    warmup: true
+    warmup: prod
     events:
       - http:
           path: mensa/{id}
@@ -102,7 +102,7 @@ functions:
 
   meals-list:
     handler: meals/list.list
-    warmup: true
+    warmup: prod
     events:
       - http:
           path: meals
@@ -111,7 +111,7 @@ functions:
 
   meals-get:
     handler: meals/get.get
-    warmup: true
+    warmup: prod
     events:
       - http:
           path: meals/{id}
@@ -120,7 +120,7 @@ functions:
 
   meals-rate:
     handler: meals/update.rate
-    warmup: true
+    warmup: prod
     events:
       - http:
           path: meals/{id}
