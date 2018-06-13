@@ -29,9 +29,9 @@ jobs:
           command: yarn test --coverage
 
       # deploy app            
-      - run:
-          name: Deploy application 
-          command: sls deploy -v --stage prod
+      # - run:
+      #     name: Deploy application 
+      #     command: sls deploy -v --stage prod
 
       - save_cache:
           paths:
