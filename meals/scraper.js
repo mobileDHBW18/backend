@@ -18,7 +18,7 @@ module.exports.scrape = (event, context, callback) => {
         TableName: process.env.DYNAMODB_TABLE_MEALS,
         Item: {
           id: uuid.v1(),
-          name: `${dish.title} - ${dish.contents[0]}`,
+          name: dish.contents[1],
           mensa: 'DHBW Mannheim Mensaria Metropol',
           categories: {
             fish: dish.type === 'Fisch',
