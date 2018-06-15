@@ -2,14 +2,16 @@
 
 const AWS = require('aws-sdk')
 const uuid = require('uuid')
+const Raven = require('raven')
 const time = require('../lib/timeUtil')
 const dishUtil = require('../lib/dishUtil')
+const RavenWrapper = require('serverless-sentry-lib')
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
 const parsePrice = str => parseFloat(str.replace(',', '.'))
 
-module.exports.scrape = (event, context, callback) => {
+module.exports.scrape = RavenWrapper.handler(Raven, (event, context, callback) => {
   const timestamp = time.now()
   dishUtil.getHtml().then(html => {
     const dishes = dishUtil.getDishes(html)
@@ -47,4 +49,4 @@ module.exports.scrape = (event, context, callback) => {
     })
     callback(null, 'done')
   })
-}
+})

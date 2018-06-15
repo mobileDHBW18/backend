@@ -6,6 +6,7 @@ plugins:
   - serverless-domain-manager # https://github.com/amplify-education/serverless-domain-manager
   - serverless-plugin-optimize # https://github.com/FidelLimited/serverless-plugin-optimize
   - serverless-plugin-warmup # https://github.com/FidelLimited/serverless-plugin-warmup
+  - serverless-sentry # https://github.com/arabold/serverless-sentry-plugin
   - serverless-prune-plugin # https://github.com/claygregory/serverless-prune-plugin
   - serverless-offline # https://github.com/dherault/serverless-offline
   - serverless-sam # https://github.com/SAPessi/serverless-sam

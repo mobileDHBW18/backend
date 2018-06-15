@@ -1031,7 +1031,7 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-bluebird@^3.4.7, bluebird@^3.5.0, bluebird@^3.5.1:
+bluebird@^3.3.5, bluebird@^3.4.7, bluebird@^3.5.0, bluebird@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
 
@@ -4929,6 +4929,12 @@ serverless-sam@^0.0.5:
 serverless-sentry-lib@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/serverless-sentry-lib/-/serverless-sentry-lib-1.0.1.tgz#f0bd3e052143b0e3cc04e7eb454fc7d67e4a6cf3"
+
+serverless-sentry-plugin@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/serverless-sentry-plugin/-/serverless-sentry-plugin-0.2.1.tgz#f10237f9ef6707bbf520a99695615b17e4a9956d"
+  dependencies:
+    bluebird "^3.3.5"
 
 serverless-sentry@^1.0.0:
   version "1.0.0"
