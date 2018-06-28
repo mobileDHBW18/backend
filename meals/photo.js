@@ -32,23 +32,47 @@ module.exports.process = event => {
 
           if (nsfw) {
             s3.deleteObject({Bucket: bucket, Key: key},
-              (err, data) => {
-                err
-                  ? console.log(err, err.stack)
+              (error, data) => {
+                error
+                  ? console.log(error, error.stack)
                   : console.log(`deleted ${key} in bucket ${bucket}`)
               })
           } else {
-            console.log('SFW')
-            /** HERE BE DYNAMO STUFF */
+            /** Safe for Work */
+            const dynamoDb = new AWS.DynamoDB.DocumentClient()
+            const gerichtID = key.split('/')[0]
+
+            const params = {
+              TableName: process.env.DYNAMODB_TABLE_MEALS,
+              Key: {
+                id: gerichtID
+              }
+            }
+
+            // fetch meal from the database
+            dynamoDb.get(params, (error, result) => {
+              if (error) {
+                console.error(error)
+              } else {
+                const picArray = result.Item.pic
+                picArray.push(fileURL)
+
+                // Add Update Properties to Params
+                params.ExpressionAttributeValues = {
+                  ':pic': picArray
+                }
+                params.UpdateExpression = 'SET pic = :pic'
+                params.ReturnValues = 'ALL_NEW'
+
+                dynamoDb.update(params, (error, result) => {
+                  if (error) console.log(error)
+                  console.log(result)
+                })
+              }
+            })
           }
-
-          console.log(`
-            ${fileURL}
-
-            NSFW: ${nsfw}
-          `)
         },
-        err => console.error(err)
+        error => console.error(error)
       )
   })
 }

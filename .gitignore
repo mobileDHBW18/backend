@@ -17,3 +17,6 @@ _warmup/
 coverage/**
 
 *.log
+
+
+test.js
