@@ -132,7 +132,7 @@ functions:
   meals-scrape:
     handler: meals/scraper.scrape
     events:
-      - schedule: cron(0 10 ? * MON-FRI *)
+      - schedule: cron(0 5 ? * MON-FRI *)
 
   photoprocess:
     handler: meals/photo.process

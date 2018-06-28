@@ -33,7 +33,9 @@ module.exports.scrape = RavenWrapper.handler(Raven, (event, context, callback) =
           rating: 0.0,
           ratingsNum: 0,
           price: parsePrice(dish.price),
-          pic: null,
+          pic: [
+            'https://thumbs.dreamstime.com/z/dishes-flat-icon-logo-web-design-single-high-quality-outline-symbol-camping-mobile-app-thin-line-signs-80789807.jpg'
+          ],
           date: timestamp,
           createdAt: timestamp,
           updatedAt: timestamp
