@@ -15,6 +15,8 @@ provider:
   name: aws
   stage: dev
   runtime: nodejs6.10
+  timeout: 15
+  memorySize: 1024
   region: eu-central-1
   environment:
     DYNAMODB_TABLE_MEALS: ${self:service}-${opt:stage, self:provider.stage}-meals

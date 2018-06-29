@@ -11,6 +11,24 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
 const parsePrice = str => parseFloat(str.replace(',', '.'))
 
+const getDefaultDishImg = type => {
+  switch (type) {
+    case 'Fisch':
+      return 'https://s3.eu-central-1.amazonaws.com/cantinr-dev-photos/fish.jpg'
+    case 'Huhn':
+      return 'https://s3.eu-central-1.amazonaws.com/cantinr-dev-photos/chicken.jpg'
+    case 'Vegetarisch':
+      return 'https://s3.eu-central-1.amazonaws.com/cantinr-dev-photos/veggie.jpg'
+    case 'Schwein':
+      return 'https://s3.eu-central-1.amazonaws.com/cantinr-dev-photos/pork.jpg'
+    case 'Rind':
+      return 'https://s3.eu-central-1.amazonaws.com/cantinr-dev-photos/beef.jpg'
+
+    default:
+      return 'https://s3.eu-central-1.amazonaws.com/cantinr-dev-photos/default.jpg'
+  }
+}
+
 module.exports.scrape = RavenWrapper.handler(Raven, (event, context, callback) => {
   const timestamp = time.now()
   dishUtil.getHtml().then(html => {
@@ -20,7 +38,7 @@ module.exports.scrape = RavenWrapper.handler(Raven, (event, context, callback) =
         TableName: process.env.DYNAMODB_TABLE_MEALS,
         Item: {
           id: uuid.v1(),
-          name: dish.contents[1],
+          name: dish.title,
           mensa: 'DHBW Mannheim Mensaria Metropol',
           categories: {
             fish: dish.type === 'Fisch',
@@ -33,9 +51,7 @@ module.exports.scrape = RavenWrapper.handler(Raven, (event, context, callback) =
           rating: 0.0,
           ratingsNum: 0,
           price: parsePrice(dish.price),
-          pic: [
-            'https://thumbs.dreamstime.com/z/dishes-flat-icon-logo-web-design-single-high-quality-outline-symbol-camping-mobile-app-thin-line-signs-80789807.jpg'
-          ],
+          pic: [getDefaultDishImg(dish.type)],
           date: timestamp,
           createdAt: timestamp,
           updatedAt: timestamp
