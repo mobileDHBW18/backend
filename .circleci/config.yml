@@ -31,7 +31,9 @@ jobs:
       # deploy app to dev         
       - run:
           name: Deploy application to DEV
-          command: sls deploy
+          command: |
+            sls create_domain
+            sls deploy
 
       - save_cache:
           paths:
