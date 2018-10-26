@@ -5,7 +5,7 @@ jobs:
 
     docker:
       # specify the version you desire here
-      - image: circleci/node:6.10
+      - image: circleci/node:8.12
 
     steps:
       - checkout
@@ -32,12 +32,17 @@ jobs:
       - run:
           name: Deploy application to DEV
           command: |
-            sls metrics
-            sls create_domain
-            sls deploy
+            sls deploy --verbose
 
       - save_cache:
           paths:
             - node_modules
           key: dependencies-cache-{{ checksum "package.json" }}
+
+workflows:
+  version: 2
+  release_dev:
+    jobs:
+      - build:
+          context: aws-sls
         
