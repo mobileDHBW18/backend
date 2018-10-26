@@ -28,10 +28,10 @@ jobs:
           name: Run tests with code coverage
           command: yarn test --coverage
 
-      # deploy app            
-      # - run:
-      #     name: Deploy application 
-      #     command: sls deploy --verbose --stage prod
+      # deploy app to dev         
+      - run:
+          name: Deploy application to DEV
+          command: sls deploy --verbose --stage dev
 
       - save_cache:
           paths:

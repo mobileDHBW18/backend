@@ -69,7 +69,7 @@ const processUploadRecord = record => {
     .then(
       response => {
         const concepts = response.outputs[0].data.concepts
-        const nsfw = concepts.find(c => c.name === 'nsfw').value > 0.15
+        const nsfw = concepts.find(c => c.name === 'nsfw').value > 0.45
 
         nsfw
           ? deleteImage(bucket, key)

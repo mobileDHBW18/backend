@@ -3,6 +3,7 @@ service: cantinr
 frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
+  - serverless-plugin-iopipe
   - serverless-domain-manager # https://github.com/amplify-education/serverless-domain-manager
   - serverless-plugin-optimize # https://github.com/FidelLimited/serverless-plugin-optimize
   - serverless-plugin-warmup # https://github.com/FidelLimited/serverless-plugin-warmup
@@ -19,6 +20,7 @@ provider:
   memorySize: 1024
   region: eu-central-1
   environment:
+    IOPIPE_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhOTRhY2E3NC05ZTg4LTRiNmItOGJjZi02NDMzMDFkNTNlZTAiLCJqdGkiOiJmMjU2NmRkYi0xNjU4LTQ0NWMtOTIwYy1mMTU2NTBmOTdmOGUiLCJpYXQiOjE1NDA1ODUzMjAsImlzcyI6Imh0dHBzOi8vaW9waXBlLmNvbSIsImF1ZCI6Imh0dHBzOi8vaW9waXBlLmNvbSxodHRwczovL21ldHJpY3MtYXBpLmlvcGlwZS5jb20vZXZlbnQvLGh0dHBzOi8vZ3JhcGhxbC5pb3BpcGUuY29tIn0.wiqZUjYQsRm6z7oY1UtjjFAvIpiK88NcHBos4iuQB5A
     DYNAMODB_TABLE_MEALS: ${self:service}-${opt:stage, self:provider.stage}-meals
     DYNAMODB_TABLE_MENSA: ${self:service}-${opt:stage, self:provider.stage}-mensa
     S3_BUCKET_PHOTOS: ${self:service}-${opt:stage, self:provider.stage}-photos
