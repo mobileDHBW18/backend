@@ -32,6 +32,7 @@ jobs:
       - run:
           name: Deploy application to DEV
           command: |
+            sls metrics
             sls create_domain
             sls deploy
 
